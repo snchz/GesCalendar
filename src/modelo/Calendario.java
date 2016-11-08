@@ -1,3 +1,4 @@
+package modelo;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,6 +45,10 @@ public class Calendario implements Iterable<Dia>{
 			return false;
 		else
 			return temp.agregarHoras(tipo, horas);
+	}
+	
+	public int obtenerNumeroDiasCalendario(){
+		return _calendario.size();
 	}
 	
 	/**
@@ -118,7 +123,7 @@ public class Calendario implements Iterable<Dia>{
 	public Dia obtenerDia(Dia d) {
 		Dia temp;
 		try {
-			temp = new Dia(d.obtenerDia(), d.obtenerMes(), d.obtenerAnio());
+			temp = new Dia(d);
 		} catch (Exception e) {
 			return null;
 		}

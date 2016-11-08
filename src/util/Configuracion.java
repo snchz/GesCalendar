@@ -1,3 +1,4 @@
+package util;
 import javax.swing.Icon;
 
 public class Configuracion {

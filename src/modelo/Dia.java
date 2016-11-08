@@ -1,14 +1,18 @@
-import java.time.DateTimeException;
-import java.time.LocalDate;
+package modelo;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 
 public class Dia implements Comparable<Dia> {
 	private Map<String, Double> _horas;
 	private int _dia, _mes, _anio;
 
-	public Dia(int dia, int mes, int anio) throws Exception{
+	public Dia(int anio, int mes, int dia) throws Exception{
 		_dia = dia;
 		_mes = mes;
 		_anio = anio;
@@ -17,13 +21,13 @@ public class Dia implements Comparable<Dia> {
 			throw new Exception("Fecha invalida: " + this.hashCode());
 	}
 	
-	public Dia(int dia, int mes, int anio, Map<String, Double> horas) throws Exception {
-		this(dia,mes,anio);
+	public Dia(int anio, int mes, int dia, Map<String, Double> horas) throws Exception {
+		this(anio,mes,dia);
 		this.asignarHoras(horas);
 	}
 
 	public Dia(Dia dia) throws Exception {
-		this(dia.obtenerDia(),dia.obtenerMes(),dia.obtenerAnio(),new HashMap<String, Double>(dia.obtenerHoras()));
+		this(dia.obtenerAnio(),dia.obtenerMes(),dia.obtenerDia(),new HashMap<String, Double>(dia.obtenerHoras()));
 	}
 	
 	/**
@@ -31,8 +35,8 @@ public class Dia implements Comparable<Dia> {
 	 * @return 1 Lunes, 2 Martes, 3 Miercoles, 4 Jueves, 5 Viernes, 6 Sabado, 7 Domingo
 	 */
 	public int obtenerDiaDeLaSemana(){
-		LocalDate ld = LocalDate.of(this._anio, this._mes, this._dia);
-		return ld.getDayOfWeek().getValue();
+		DateTime dt=new DateTime(this.obtenerAnio(), this.obtenerMes(), this.obtenerDia(), 0, 0);
+		return dt.dayOfWeek().get();
 	}
 
 	/**
@@ -86,14 +90,16 @@ public class Dia implements Comparable<Dia> {
 
 	public Dia obtenerDiaSiguiente() {
 		try {
-			LocalDate ld = LocalDate.of(this._anio, this._mes, this._dia);
-			LocalDate ldsig = ld.plusDays(1);
-			Dia res = new Dia(ldsig.getDayOfMonth(), ldsig.getMonthValue(), ldsig.getYear(), new HashMap<>());
+			DateTime dt=new DateTime(this.obtenerAnio(), this.obtenerMes(), this.obtenerDia(), 0, 0);
+			dt.plusDays(1);
+			Dia res = new Dia(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth(), new HashMap<>());
 			return new Dia(res);
 		} catch (Exception e) {
 			return null;
 		}
 	}
+
+
 
 	public int obtenerDia() {
 		return _dia;
@@ -106,6 +112,23 @@ public class Dia implements Comparable<Dia> {
 	public int obtenerAnio() {
 		return _anio;
 	}
+	
+	/**
+	 * 
+	 * @param formato yyyy/MM/dd
+	 * @return
+	 */
+	public String obtenerFechaConFormato(String formato){
+		try{
+		DateTimeFormatter dtf=DateTimeFormat.forPattern(formato);
+		DateTime dt=new DateTime(this.obtenerAnio(), this.obtenerMes(), this.obtenerDia(),0,0,0,0);
+		return dt.toString(dtf);
+	}catch (Exception e) {
+		return null;
+	}
+	}
+
+
 
 	public Map<String, Double> obtenerHoras() {
 		return _horas;
@@ -156,12 +179,14 @@ public class Dia implements Comparable<Dia> {
 	private boolean esValido() {
 		boolean valido = true;
 		try {
-			LocalDate.of(_anio, _mes, _dia);
-		} catch (DateTimeException e) {
+			new DateTime(this.obtenerAnio(), this.obtenerMes(), this.obtenerDia(),0,0,0,0);
+		} catch (Exception e) {
 			valido = false;
 		}
 		return valido;
 	}
+	
+
 
 	@Override
 	/**
@@ -194,7 +219,7 @@ public class Dia implements Comparable<Dia> {
 		int res = _anio * 10000 + _mes * 100 + _dia;
 		return res;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
