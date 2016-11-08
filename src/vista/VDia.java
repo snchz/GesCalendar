@@ -18,6 +18,7 @@ import util.Vistas;
 
 public class VDia extends JPanel {
 	private Dimension _dimVDia;
+	private JTextField _jtf_fecha;
 	
 	public VDia(Dia d) {
 		super();
@@ -32,21 +33,11 @@ public class VDia extends JPanel {
 		this.inicializarComponentes(d);
 	}
 	
-	private JTextField fechaJTextField(Dia d){
-		JTextField jtf_fecha = new JTextField(d.obtenerFechaConFormato("yyyy/MM/dd"));
-		jtf_fecha.setEditable(false);
-		jtf_fecha.setSize(80, 20);
-		jtf_fecha.setMaximumSize(jtf_fecha.getSize());
-		jtf_fecha.setHorizontalAlignment(SwingConstants.CENTER);
-		return jtf_fecha;
-	}
-	
 	private JComboBox<String> tipoJComboBox(String s){
 		String[] items=new String[1]; items[0]=new String(s);
 		JComboBox<String> jcb_tipo=new JComboBox<String>(items);
 		return jcb_tipo;
 	}
-	
 	
 	/**
 	 * Alto VDia = 20*numTiposHoras
@@ -56,32 +47,36 @@ public class VDia extends JPanel {
 	private void inicializarComponentes(Dia d){
 		int tamanioListaHoras=d.obtenerHoras().keySet().size();
 		//Componente de Fecha
-		
-		this.add(fechaJTextField(d));
-		
+		_jtf_fecha = new JTextField(d.obtenerFechaConFormato("yyyy/MM/dd"));
+		_jtf_fecha.setEditable(false);
+		_jtf_fecha.setSize(80, 20);
+		_jtf_fecha.setMaximumSize(_jtf_fecha.getSize());
+		_jtf_fecha.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		Map<String, Double> m = d.obtenerHoras();
-		int numeroTiposHoras=m.size();
-
-		_dimVDia=new Dimension(310, numeroTiposHoras*20);
-		
-		//CONTENIDO
 		int i = 0;
 		for (String s : m.keySet()) {
 			//TIPO
-			
-			this.add(jcb_tipo);
+			String[] items=new String[1]; items[0]=new String(s);
+			JComboBox<String> jcb_tipo=new JComboBox<String>(items);
+			//TODO add
 			//HORAS
 			JTextField jtf_horas=new JTextField(m.get(s).toString());
-			this.add(jtf_horas);
+			//TODO add
 			//ELIMINAR
 			JButton jb_eliminar=new JButton("-");
-			this.add(jb_eliminar);
+			//TODO add
 			i++;
 		}
 
 		JButton jb_anadir=new JButton("+");
-		this.add(jb_anadir);
+		//TODO add
+		
+		
+		
+		
+
+		_dimVDia=new Dimension(310, tamanioListaHoras*20);
 	}
 	
 	public void pack(){
