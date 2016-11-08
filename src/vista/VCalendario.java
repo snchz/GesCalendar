@@ -1,41 +1,31 @@
 package vista;
-import java.awt.GridLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import modelo.Calendario;
 import modelo.Dia;
+import util.Vistas;
 
 public class VCalendario extends JPanel{
 	
 	public VCalendario(Calendario c){
 		super();
-		setLayout(new GridLayout(3,1));
+		setLayout(new GridBagLayout());
+		this.setBackground(Color.WHITE);
+		int i=0;
 		for(Dia d:c){
 			VDia vd=new VDia(d);
-			this.add(vd);
+			vd.setBorder(javax.swing.BorderFactory.createMatteBorder(
+                    1, 5, 1, 1, Color.DARK_GRAY));
+			this.add(vd,Vistas.obtenerConstraints(0, i, 1, 1,GridBagConstraints.WEST,GridBagConstraints.BOTH));
+			i++;
 		}
 		
-	}
-	
-	public static void main(String[] args) throws Exception {
-		JFrame jf=new JFrame();
-		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		jf.setSize(300, 200);
-		jf.setLocationRelativeTo(null);
-
-		Dia d1=new Dia("20160102");
-		Dia d=new Dia("20160101");
-		d.agregarHoras("NORMAL", 8.0);
-		d.agregarHoras("EXTRA", 1.5);
-		
-		Calendario c=new Calendario();
-		c.agregarDia(d);
-		c.agregarDia(d1);
-		
-		VCalendario vc=new VCalendario(c);
-		jf.add(vc);
-		jf.setVisible(true);
 	}
 }

@@ -1,38 +1,62 @@
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.Map;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import modelo.Dia;
+import util.Vistas;
 
 public class VDia extends JPanel {
 
 	public VDia(Dia d) {
 		super();
-		setLayout(new BorderLayout());
-		JTextField jtf_fecha = new JTextField(d.obtenerFechaConFormato("yyyy/MM/dd"));
-		jtf_fecha.setEditable(false);
-		this.add(jtf_fecha, BorderLayout.WEST);
+		setLayout(new GridBagLayout());
+		this.setBackground(Color.LIGHT_GRAY);
+		// ---------------------
+		// |Fecha| Horas	1	-+|
+		// |	 | Horas	2	-+|
+		// |	 | Horas	3	-+|
+		// |	 | Horas	4	-+|
+		// ---------------------
+		this.inicializarComponentes(d);
+	}
+	
+	
+	
+	private void inicializarComponentes(Dia d){
+		int tamanioListaHoras=d.obtenerHoras().keySet().size();
+		//Componente de Fecha
+		JTextField jtf_fecha = Vistas.obtenerJTextField(d.obtenerFechaConFormato("yyyy/MM/dd"), false, 20, false);
+		this.add(jtf_fecha, Vistas.obtenerConstraints(0, 0, 1, tamanioListaHoras,GridBagConstraints.WEST,GridBagConstraints.NONE));
 
 		Map<String, Double> m = d.obtenerHoras();
-		JTable jt = new JTable(m.size(), 2);
-		jt.getColumnModel().getColumn(0).setHeaderValue("Tipo");
-		jt.getColumnModel().getColumn(1).setHeaderValue("Horas");
+		
+		//CONTENIDO
 		int i = 0;
 		for (String s : m.keySet()) {
-			jt.setValueAt(s, i, 0);
-			jt.setValueAt(m.get(s), i, 1);
+			//TIPO
+			String[] items=new String[1]; items[0]=new String(s);
+			JComboBox<String> jcb_tipo=Vistas.obtenerJComboBox(items,false,15);
+			this.add(jcb_tipo,Vistas.obtenerConstraints(1, i, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
+			//HORAS
+			JTextField jtf_horas=Vistas.obtenerJTextField(m.get(s).toString(), false, 3, false);
+			this.add(jtf_horas,Vistas.obtenerConstraints(2, i, 1, 1,GridBagConstraints.EAST,GridBagConstraints.NONE));
+			//ELIMINAR
+			JButton jb_eliminar=Vistas.obtenerJButton("-", null);
+			this.add(jb_eliminar,Vistas.obtenerConstraints(3, i, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE));
 			i++;
 		}
-		// Para mostrar la cabecera se mete la tabla dentro de un scroll pane
-		this.add(new JScrollPane(jt), BorderLayout.CENTER);
+
+		JButton jb_anadir=Vistas.obtenerJButton("+", null);
+		this.add(jb_anadir,Vistas.obtenerConstraints(4, 0, 1, tamanioListaHoras, GridBagConstraints.EAST,GridBagConstraints.NONE));
 	}
 
 	public static void main(String[] args) throws Exception {
