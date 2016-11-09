@@ -1,4 +1,7 @@
 package util;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.swing.Icon;
 
 public class Configuracion {
@@ -9,6 +12,7 @@ public class Configuracion {
 	public static String MENU_ARCHICHO_IMPORTARDEFECTO = "Importar desde .gcd";
 	public static String MENU_ARCHIVO="Archivo";
 	
+	public static Set<String> ITEMS_TIPO_HORAS=new HashSet<String>();
 	
 
 }

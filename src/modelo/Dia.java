@@ -1,6 +1,8 @@
 package modelo;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.joda.time.DateTime;
@@ -28,6 +30,14 @@ public class Dia implements Comparable<Dia> {
 
 	public Dia(Dia dia) throws Exception {
 		this(dia.obtenerAnio(),dia.obtenerMes(),dia.obtenerDia(),new HashMap<String, Double>(dia.obtenerHoras()));
+	}
+	
+	public Set<String> obtenerTiposUsados(){
+		Set<String> res=new HashSet<String>();
+		for(String tipo:_horas.keySet()){
+			res.add(tipo);
+		}
+		return res;
 	}
 	
 	/**

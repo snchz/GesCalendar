@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import util.Configuracion;
+
 public class Calendario implements Iterable<Dia>{
 	private List<Dia> _calendario;
 
@@ -28,6 +30,7 @@ public class Calendario implements Iterable<Dia>{
 	 * @return true si todo ok
 	 */
 	public boolean agregarDia(Dia d) {
+		Configuracion.ITEMS_TIPO_HORAS.addAll(d.obtenerTiposUsados());
 		return _calendario.add(d);
 	}
 

@@ -2,45 +2,80 @@ package util;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class Vistas {
-	public static GridBagConstraints obtenerConstraints(int columnaDondeEmpieza, int filaDondeEmpieza, int columnasQueOcupa, int filasQueOcupa, int anchor,int fill){
+
+	/**
+	 * 
+	 * anchor 
+	 * GridBagConstraints.CENTER Es la opci贸n por defecto 
+	 * GridBagConstraints.NORTH 
+	 * GridBagConstraints.NORTHEAST 
+	 * GridBagConstraints.WEST  
+	 * GridBagConstraints.NORTHWEST 
+	 * 
+	 * fill 
+	 * GridBagConstraints.NONE para que no se estire en ning煤n sentido, es
+	 * 		la opci贸n por defecto. 
+	 * GridBagConstraints.VERTICAL para que se estire s贸lo en vertical 
+	 * GridBagConstraints.HORIZONTAL para que se estire s贸lo en horizontal. 
+	 * GridBagConstraints.BOTH para que se estire en ambas dimensiones
+	 * 
+	 * @param columnaDondeEmpieza
+	 * @param filaDondeEmpieza
+	 * @param columnasQueOcupa
+	 * @param filasQueOcupa
+	 * @param anchor
+	 * @param fill
+	 * @return
+	 */
+	public static GridBagConstraints obtenerConstraints(int columnaDondeEmpieza, int filaDondeEmpieza,
+			int columnasQueOcupa, int filasQueOcupa, int anchor, int fill) {
 		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.gridx = columnaDondeEmpieza; // El 醨ea empieza en la columna cero.
-		constraints.gridy = filaDondeEmpieza; // El 醨ea empieza en la fila cero
-		constraints.gridwidth = columnasQueOcupa; // El 醨ea de texto ocupa dos columnas.
-		constraints.gridheight = filasQueOcupa; // El 醨ea de texto ocupa 2 filas.
-		constraints.weighty = 0.0;
-		constraints.fill=fill;
-		constraints.anchor=anchor;
+		constraints.gridx = columnaDondeEmpieza; 
+		constraints.gridy = filaDondeEmpieza; 
+		constraints.gridwidth = columnasQueOcupa;
+		constraints.gridheight = filasQueOcupa; 
+		//constraints.weighty = 0.0;
+		constraints.fill = fill;
+		constraints.anchor = anchor;
 		return constraints;
 	}
-	
-	public static JButton obtenerJButton(String texto, Dimension dimensiones){
-		JButton jb=new JButton(texto);
-		if (dimensiones!=null)
-			jb.setSize(dimensiones);
-		return jb;
-	}
-	
-	public static JComboBox<String> obtenerJComboBox(String[] items,boolean habilitado,int ancho){
-		JComboBox<String> res=new JComboBox<String>(items);
-		res.setEnabled(habilitado);
-		res.getSize().width=ancho;
+
+	public static JButton obtenerJButton(String texto, Dimension dimension) {
+		JButton res = new JButton(texto);
+		if (dimension!=null){
+		res.setPreferredSize(dimension);
+		res.setMinimumSize(dimension);
+		res.setMaximumSize(dimension);
+		}
 		return res;
 	}
-	
-	public static JTextField obtenerJTextField(String texto,boolean editable, int ancho, boolean borde){
-		JTextField res =new JTextField(texto);
+
+	public static JComboBox<String> obtenerJComboBox(String[] items, boolean habilitado, Dimension dimension) {
+		JComboBox<String> res = new JComboBox<String>(items);
+		res.setEnabled(habilitado);
+		res.setPreferredSize(dimension);
+		res.setMinimumSize(dimension);
+		res.setMaximumSize(dimension);
+		return res;
+	}
+
+	public static JTextField obtenerJTextField(String texto, boolean editable, Dimension dimension, boolean borde) {
+		JTextField res = new JTextField(texto);
 		res.setEditable(editable);
-		res.setSize(new Dimension(res.getSize().height,ancho));
-		res.setMinimumSize(new Dimension(res.getSize().height,ancho));
+		res.setPreferredSize(dimension);
+		res.setMinimumSize(dimension);
+		res.setMaximumSize(dimension);
 		res.setBackground(Color.WHITE);
+		res.setHorizontalAlignment(SwingConstants.CENTER);
 		if (!borde)
 			res.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		return res;

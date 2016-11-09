@@ -10,6 +10,7 @@ import modelo.Calendario;
 import modelo.Dia;
 
 public class VPrincipal extends JFrame{
+	
 	public VPrincipal(VCalendario vc){
 		iniciarComponentes(vc);
 	}

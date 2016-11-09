@@ -4,86 +4,95 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
 import modelo.Dia;
+import util.Configuracion;
 import util.Vistas;
 
 public class VDia extends JPanel {
-	private Dimension _dimVDia;
-	private JTextField _jtf_fecha;
+	private Dia _d;
 	
 	public VDia(Dia d) {
 		super();
-		this.setLayout(new GridBagLayout());
-		this.setBackground(Color.LIGHT_GRAY);
+		_d=d;
+		setLayout(new GridBagLayout());
+		this.setBackground(Color.WHITE);
 		// ---------------------
 		// |Fecha| Horas	1	-+|
 		// |	 | Horas	2	-+|
 		// |	 | Horas	3	-+|
 		// |	 | Horas	4	-+|
 		// ---------------------
-		this.inicializarComponentes(d);
+		this.inicializarComponentes();
 	}
 	
-	private JComboBox<String> tipoJComboBox(String s){
-		String[] items=new String[1]; items[0]=new String(s);
-		JComboBox<String> jcb_tipo=new JComboBox<String>(items);
-		return jcb_tipo;
+	public void actualizarComponente(){
+		this.removeAll();
+		this.inicializarComponentes();
 	}
 	
-	/**
-	 * Alto VDia = 20*numTiposHoras
-	 * Ancho VDia = 80(fecha)+200(Combo Tipo)+30(horas)=310
-	 * @param d
-	 */
-	private void inicializarComponentes(Dia d){
-		int tamanioListaHoras=d.obtenerHoras().keySet().size();
+	public Dia obtenerDia(){
+		return _d;
+	}
+	
+	private void inicializarComponentes(){
+		int tamanioListaHoras=_d.obtenerTiposUsados().size();
 		//Componente de Fecha
-		_jtf_fecha = new JTextField(d.obtenerFechaConFormato("yyyy/MM/dd"));
-		_jtf_fecha.setEditable(false);
-		_jtf_fecha.setSize(80, 20);
-		_jtf_fecha.setMaximumSize(_jtf_fecha.getSize());
-		_jtf_fecha.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		Map<String, Double> m = d.obtenerHoras();
+		JTextField jtf_fecha = Vistas.obtenerJTextField(_d.obtenerFechaConFormato("yyyy/MM/dd"), false, new Dimension(80, 20), false);
+		this.add(jtf_fecha, Vistas.obtenerConstraints(0, 0, 1, tamanioListaHoras,GridBagConstraints.WEST,GridBagConstraints.NONE));
+
+		Map<String, Double> m = _d.obtenerHoras();
+		//CONTENIDO
 		int i = 0;
-		for (String s : m.keySet()) {
+		for (String tipoHora : m.keySet()) {
 			//TIPO
-			String[] items=new String[1]; items[0]=new String(s);
-			JComboBox<String> jcb_tipo=new JComboBox<String>(items);
-			//TODO add
-			//HORAS
-			JTextField jtf_horas=new JTextField(m.get(s).toString());
-			//TODO add
-			//ELIMINAR
-			JButton jb_eliminar=new JButton("-");
-			//TODO add
+			this.anadirHoras(i,tipoHora,m.get(tipoHora).toString());
 			i++;
 		}
+		if(i==0){
+			this.anadirHoras(i,"","0");
+		}
 
-		JButton jb_anadir=new JButton("+");
-		//TODO add
-		
-		
-		
-		
-
-		_dimVDia=new Dimension(310, tamanioListaHoras*20);
+		JButton jb_anadir=Vistas.obtenerJButton("+", new Dimension(41, 26));
+		jb_anadir.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JButton b = (JButton)e.getSource();
+				System.out.println(b.getParent());
+				VDia vd=(VDia) b.getParent();
+				try {
+					vd.obtenerDia().agregarHoras(Configuracion.ITEMS_TIPO_HORAS.iterator().next(), 0);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+        });
+		this.add(jb_anadir,Vistas.obtenerConstraints(4, 0, 1, tamanioListaHoras, GridBagConstraints.EAST,GridBagConstraints.NONE));
 	}
 	
-	public void pack(){
-		this.setSize(this._dimVDia);
-		this.setMinimumSize(this._dimVDia);
-		this.setMaximumSize(this._dimVDia);
-		this.setPreferredSize(this._dimVDia);
+	public void anadirHoras(int filaDondeEmpieza, String tipoHora, String horas){
+		String[] items=(String[])_d.obtenerTiposUsados().toArray(new String[Configuracion.ITEMS_TIPO_HORAS.size()]);	
+		//TIPO
+		JComboBox<String> jcb_tipo=Vistas.obtenerJComboBox(items,false,new Dimension(100, 20));
+		jcb_tipo.setSelectedItem(tipoHora);
+		this.add(jcb_tipo,Vistas.obtenerConstraints(1, filaDondeEmpieza, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
+		//HORAS
+		JTextField jtf_horas=Vistas.obtenerJTextField(horas, false, new Dimension(30, 20), false);
+		this.add(jtf_horas,Vistas.obtenerConstraints(2, filaDondeEmpieza, 1, 1,GridBagConstraints.EAST,GridBagConstraints.NONE));
+		//ELIMINAR
+		JButton jb_eliminar=Vistas.obtenerJButton("-", new Dimension(41, 26));
+		this.add(jb_eliminar,Vistas.obtenerConstraints(3, filaDondeEmpieza, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE));
+		
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -98,13 +107,8 @@ public class VDia extends JPanel {
 
 		VDia vd = new VDia(d);
 		jf.add(vd);
-		System.out.println(vd.getSize());
 		jf.setVisible(true);
-		System.out.println(vd.getSize());
-		vd.pack();
-		System.out.println(vd.getSize());
-		//jf.pack();
-		System.out.println(vd.getSize());
+		jf.pack();
 	}
 
 }
