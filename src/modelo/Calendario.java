@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import util.Configuracion;
 
 public class Calendario implements Iterable<Dia>{
 	private List<Dia> _calendario;
@@ -30,7 +29,7 @@ public class Calendario implements Iterable<Dia>{
 	 * @return true si todo ok
 	 */
 	public boolean agregarDia(Dia d) {
-		Configuracion.ITEMS_TIPO_HORAS.addAll(d.obtenerTiposUsados());
+		ParametrosModelo.obtenerInstancia().set_items_tipo_horas.addAll(d.obtenerListaHoras().obtenerTiposUsados());
 		return _calendario.add(d);
 	}
 
@@ -47,7 +46,7 @@ public class Calendario implements Iterable<Dia>{
 		if (temp==null)
 			return false;
 		else
-			return temp.agregarHoras(tipo, horas);
+			return temp.obtenerListaHoras().anadirHoras(tipo, horas);
 	}
 	
 	public int obtenerNumeroDiasCalendario(){
@@ -91,7 +90,7 @@ public class Calendario implements Iterable<Dia>{
 			}
 			while (ini.hashCode() <= fin.hashCode()) {
 				this.agregarDia(ini);
-				ini = ini.obtenerDiaSiguiente();
+				ini = new Dia(ini.obtenerFecha().obtenerDiaSiguiente());
 			}
 			res = true;
 		} catch (Exception e) {
@@ -136,15 +135,6 @@ public class Calendario implements Iterable<Dia>{
 		return null;
 	}
 
-	@Override
-	public String toString() {
-		this.ordenar();
-		StringBuffer res = new StringBuffer();
-		for (Dia d : _calendario)
-			res.append(d + "\n");
-		return res.toString();
-	}
-
 	private void ordenar() {
 		Collections.sort(_calendario);
 	}
@@ -153,7 +143,7 @@ public class Calendario implements Iterable<Dia>{
 		double res=0;
 		for (Dia d:_calendario){
 			if (d.hashCode()>=ini.hashCode()&&d.hashCode()<=fin.hashCode())
-				res=res+d.obtenerSumaHoras(tipo);
+				res=res+d.obtenerListaHoras().obtenerSumaHorasDelTipo(tipo);
 		}
 		return res;
 	}
@@ -161,7 +151,7 @@ public class Calendario implements Iterable<Dia>{
 	public List<Dia> obtenerDiasSinHoras(){
 		List<Dia> res=new ArrayList<>();
 		for (Dia d:_calendario){
-			if (d.obtenerSumaTotalHoras()==0)
+			if (d.obtenerListaHoras().obtenerSumaTotalHoras()==0)
 				res.add(d);
 		}
 		Collections.sort(res);
@@ -171,7 +161,7 @@ public class Calendario implements Iterable<Dia>{
 	public int obtenerContadorDiasConTipo(String tipo, Dia ini, Dia fin) {
 		int res=0;
 		for (Dia d:_calendario){
-			if (d.hashCode()>=ini.hashCode()&&d.hashCode()<=fin.hashCode()&&d.tieneHorasDelTipo(tipo))
+			if (d.hashCode()>=ini.hashCode()&&d.hashCode()<=fin.hashCode()&&(d.obtenerListaHoras().obtenerSumaHorasDelTipo(tipo)>0))
 				res++;
 		}
 		return res;
@@ -179,8 +169,8 @@ public class Calendario implements Iterable<Dia>{
 	
 	public boolean rellenarFinDeSemana(String tipo, double horas) throws Exception{
 		for(Dia d:_calendario){
-			if (d.obtenerDiaDeLaSemana()==6 || d.obtenerDiaDeLaSemana()==7){
-				d.agregarHoras(tipo, horas);
+			if (d.obtenerFecha().obtenerDiaDeLaSemana()==6 || d.obtenerFecha().obtenerDiaDeLaSemana()==7){
+				d.obtenerListaHoras().anadirHoras(tipo, horas);
 			}
 		}
 		return true;
@@ -190,6 +180,7 @@ public class Calendario implements Iterable<Dia>{
 		try {
 			Calendario c = new Calendario();
 			c.importarCalendario(new File("exportado.dat"));
+			c.agregarHorasADia(new Dia("20161206"), "NUEVO", 0.0);
 			System.out.println(c);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -200,6 +191,15 @@ public class Calendario implements Iterable<Dia>{
 	@Override
 	public Iterator<Dia> iterator() {
 		return _calendario.iterator();
+	}
+
+	@Override
+	public String toString() {
+		this.ordenar();
+		StringBuffer res = new StringBuffer();
+		for (Dia d : _calendario)
+			res.append(d + "\n");
+		return res.toString();
 	}
 
 }

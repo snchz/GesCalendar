@@ -1,9 +1,9 @@
 package vista;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import modelo.Calendario;
@@ -11,6 +11,11 @@ import modelo.Dia;
 
 public class VPrincipal extends JFrame{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public VPrincipal(VCalendario vc){
 		iniciarComponentes(vc);
 	}
@@ -20,7 +25,7 @@ public class VPrincipal extends JFrame{
 		setSize(300, 200);
 		setLocationRelativeTo(null);
 		
-		add(vc);
+		add(new JScrollPane(vc));
 		pack();
 		setMinimumSize(getSize());
 		setVisible(true);
@@ -45,23 +50,17 @@ public class VPrincipal extends JFrame{
                 try{
         			Calendario c=new Calendario();
         	
-        			Dia d=new Dia("20160101");
-        			d.agregarHoras("NORMAL", 8.0);
-        			d.agregarHoras("EXTRA", 1.5);
-        			d.agregarHoras("ROLLOUT", 4);
+        			Dia d=new Dia("20160101#EXTRA=1.0;INVIERNO=8.0");
         			c.agregarDia(d);
         			
         	
-        			Dia d1=new Dia("20160102");
-        			d1.agregarHoras("NORMAL", 8.0);
+        			Dia d1=new Dia("20160102#NORMAL=8.0");
         			c.agregarDia(d1);
         	
         			Dia d2=new Dia("20160103");
         			c.agregarDia(d2);
         			
-        			Dia d3=new Dia("20160104");
-        			d3.agregarHoras("NORMAL", 8.0);
-        			d3.agregarHoras("EXTRA", 2.0);
+        			Dia d3=new Dia("20160104#NORMAL=8.0;EXTRA=2.0");
         			c.agregarDia(d3);
         			
         			VCalendario vc=new VCalendario(c);
