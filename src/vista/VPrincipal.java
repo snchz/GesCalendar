@@ -1,34 +1,58 @@
 package vista;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.joda.time.DateTime;
+
 import modelo.Calendario;
 import modelo.Dia;
+import modelo.ParametrosModelo;
 
 public class VPrincipal extends JFrame{
+	private static final long serialVersionUID = -851955688502061398L;
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	public VPrincipal(VCalendario vc){
-		iniciarComponentes(vc);
-	}
-
-	private void iniciarComponentes(VCalendario vc) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(300, 200);
-		setLocationRelativeTo(null);
+		super();
 		
-		add(new JScrollPane(vc));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		setLayout(new BorderLayout());
+		setBackground(ParametrosModelo.FONDO_VPRINCIPAL);
+		
+		iniciarComponentes(vc);
+		
 		pack();
 		setMinimumSize(getSize());
+		setMaximumSize(new Dimension(getSize().height,getSize().width+800));
 		setVisible(true);
+	}
+	
+	
+	private void iniciarComponentes(VCalendario vc) {
+		
+		add(new JScrollPane(vc),BorderLayout.WEST);
+		//Vistas.obtenerConstraints(0, 0, 1, 4,GridBagConstraints.NORTHWEST,GridBagConstraints.BOTH));
+		
+		this.addWindowListener(new WindowAdapter()
+        {
+            @Override
+            public void windowClosing(WindowEvent e)
+            {
+                System.out.println("Closed");
+                vc.obtenerCalendario().exportarCalendario(new File("exportado.dat"));
+                e.getWindow().dispose();
+            }
+        });
 	}
 
 	public static void main(String[] args)  {
@@ -48,20 +72,13 @@ public class VPrincipal extends JFrame{
                 }
                 
                 try{
-        			Calendario c=new Calendario();
-        	
-        			Dia d=new Dia("20160101#EXTRA=1.0;INVIERNO=8.0");
-        			c.agregarDia(d);
+        			DateTime dt=DateTime.now();
+        			Dia actual=new Dia(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
         			
-        	
-        			Dia d1=new Dia("20160102#NORMAL=8.0");
-        			c.agregarDia(d1);
-        	
-        			Dia d2=new Dia("20160103");
-        			c.agregarDia(d2);
-        			
-        			Dia d3=new Dia("20160104#NORMAL=8.0;EXTRA=2.0");
-        			c.agregarDia(d3);
+        			Calendario c = new Calendario();
+        			c.importarCalendario(new File("exportado.dat"));
+        			c.generarCalendario(new Dia("20160101"), actual);
+        			//c.exportarCalendario(new File("exportado.dat"));
         			
         			VCalendario vc=new VCalendario(c);
         			VPrincipal vp=new VPrincipal(vc);

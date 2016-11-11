@@ -1,11 +1,11 @@
 package vista;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,13 +21,20 @@ import modelo.ParametrosModelo;
 import util.Vistas;
 
 public class VListaHoras extends JPanel {
+	private static final long serialVersionUID = 5792964151871781810L;
 	private ListaHoras _lh;
+	
+	
+	
+	//////////////////////////////
+	///		CONTRUCTORES		//
+	//////////////////////////////
 	
 	public VListaHoras(ListaHoras lh){
 		super();
 		this._lh=lh;
 		this.setLayout(new GridBagLayout());
-		this.setBackground(Color.WHITE);
+		this.setBackground(ParametrosModelo.FONDO_VLISTAHORAS);
 		this.inicializarComponentes();
 	}
 	
@@ -49,21 +56,43 @@ public class VListaHoras extends JPanel {
 	
 	private void anadirFilaHoras(int fila, String tipoHora, Double horas) {
 		boolean editable=false;
-		String[] items=new String[1];
-		items[0]=tipoHora;
-		if(horas==0){
-			Set <String> listaTotal=new HashSet<String>(ParametrosModelo.obtenerInstancia().set_items_tipo_horas);
-			listaTotal.removeAll(this._lh.obtenerTiposUsados());
-			items=(String[])listaTotal.toArray(new String[listaTotal.size()]);	
+		if(horas==0)
 			editable=true;
-		}
 		
+		Set <String> listaTotal=new HashSet<String>(ParametrosModelo.obtenerInstancia().set_items_tipo_horas);
+		//eliminar todos los usados menos el seleccionado
+		listaTotal.removeAll(this._lh.obtenerTiposUsadosMenos(tipoHora));
+		String[] items=(String[])listaTotal.toArray(new String[listaTotal.size()]);	
+		
+		//Los items son todos menos los usados, pero incluyendo el seleccionado
 		JComboBox<String> jcb_tipo=Vistas.obtenerJComboBox(items,editable,new Dimension(100, 20));
 		jcb_tipo.setSelectedItem(tipoHora);
 		this.add(jcb_tipo,Vistas.obtenerConstraints(1, fila, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
 		
 		JTextField jtf_horas=Vistas.obtenerJTextField(horas.toString(), editable, new Dimension(30, 20), false);
 		this.add(jtf_horas,Vistas.obtenerConstraints(2, fila, 1, 1,GridBagConstraints.EAST,GridBagConstraints.NONE));
+		jtf_horas.addFocusListener(new java.awt.event.FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				_lh.eliminarHoras((String)jcb_tipo.getSelectedItem());
+				try {
+					_lh.anadirHoras((String)jcb_tipo.getSelectedItem(), Double.valueOf(jtf_horas.getText()));
+					System.out.println("Cambios realizados.");
+				} catch (NumberFormatException e1) {
+					e1.printStackTrace();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+			
+		});
 		
 		JButton jb_eliminar=Vistas.obtenerJButton("-", new Dimension(41, 26));
 		jb_eliminar.addActionListener(new ActionListener(){
@@ -85,11 +114,11 @@ public class VListaHoras extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						//buscamos un item que no esté añadido ya
-						Set <String> listaTotal=new HashSet<String>(ParametrosModelo.obtenerInstancia().set_items_tipo_horas);
-						listaTotal.removeAll(_lh.obtenerTiposUsados());
-						if (listaTotal.size()>0)
-							_lh.anadirHoras(listaTotal.iterator().next(), 0.0);
+						//buscamos un item que no este anadido ya
+						Set<String> tiposNoUsados=_lh.obtenerTiposNoUsadosDe(ParametrosModelo.obtenerInstancia().set_items_tipo_horas);
+						System.out.println("TiposNoUsados: "+tiposNoUsados);
+						if (tiposNoUsados.size()>0)
+							_lh.anadirHoras(tiposNoUsados.iterator().next(), 0.0);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}

@@ -9,10 +9,16 @@ import java.util.StringTokenizer;
 
 public class ListaHoras {
 	/**
-	 * Minimo, contendrá el siguiente par:
+	 * Minimo, contendra el siguiente par:
 	 * ParametrosModelo.ITEM_TIPO_HORAS_RESTANTES, ParametrosModelo.HORAS_TOTAL
 	 */
 	private Map<String, Double> _horas;
+	
+	
+	
+	//////////////////////////////
+	///		CONTRUCTORES		//
+	//////////////////////////////
 	
 	public ListaHoras(){
 		_horas=new HashMap<String, Double>();
@@ -22,9 +28,14 @@ public class ListaHoras {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public ListaHoras(ListaHoras obtenerListaHoras) {
-		_horas=new HashMap<String, Double>(obtenerListaHoras.obtenerListaHoras());
+		this();
+		try {
+			anadirHoras(obtenerListaHoras.obtenerListaHoras());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -54,6 +65,12 @@ public class ListaHoras {
 		this.validaHoras();
 	}
 	
+	
+	
+	//////////////////////////////
+	///		Obtener/asignar		//
+	//////////////////////////////
+	
 	public Map<String, Double> obtenerListaHoras(){
 		return _horas;
 	}
@@ -66,12 +83,77 @@ public class ListaHoras {
 		return res;
 	}
 
+	public Set<String> obtenerTiposNoUsadosDe(Set<String> repo){
+		Set<String> res=new HashSet<String>(repo);
+		res.removeAll(this.obtenerTiposUsados());
+		return res;
+	}
+
+	public Set<String> obtenerTiposUsadosMenos(String tipo){
+		Set<String> res=new HashSet<String>(this.obtenerTiposUsados());
+		res.remove(tipo);
+		return res;
+	}
+	
+	public Double obtenerSumaTotalHoras() {
+		double res = 0;
+		for (Double d : _horas.values())
+			res = res + d;
+		return res;
+	}
+
+	public Double obtenerSumaHorasDelTipo(String tipo) {
+		Double temp=_horas.get(tipo);
+		double res=0;
+		if (temp==null)
+			res=0;
+		else
+			res=temp.doubleValue();
+		return res;
+	}
+
+	
+	
+	//////////////////////////////
+	///		Anadir/eliminar		//
+	//////////////////////////////
+
 	public boolean anadirHoras(String tipo, Double horas) throws Exception {
 		_horas.put(tipo, horas);
 		validaHoras();
 		ParametrosModelo.obtenerInstancia().set_items_tipo_horas.add(tipo);
 		return true;
 	}
+	
+	public boolean anadirHoras(Map<String,Double> listaHoras) throws Exception {
+		_horas.putAll(listaHoras);
+		validaHoras();
+		ParametrosModelo.obtenerInstancia().set_items_tipo_horas.addAll(listaHoras.keySet());
+		return true;
+	}
+	
+	public void eliminarHoras(String tipoHora) {
+		_horas.remove(tipoHora);
+		try {
+			validaHoras();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void eliminarTiposConHorasCero(){
+		//Eliminar aquellos tipos de hora con 0 horas
+		Map<String, Double> copia=new HashMap<String, Double>(this._horas);
+		for (String tipo:copia.keySet())
+			if (((Double)copia.get(tipo))==0)
+				this.eliminarHoras(tipo);
+	}
+	
+	
+	//////////////////////////////
+	///		Funciones logicas	//
+	//////////////////////////////
 	
 	private boolean validaHoras() throws Exception {
 		if (this._horas==null)
@@ -101,28 +183,15 @@ public class ListaHoras {
 			_horas.put(ParametrosModelo.ITEM_TIPO_HORAS_RESTANTES, diferencia);
 			return true;
 		}
+		
 		return false;
 	}
 	
-
-
-	public Double obtenerSumaTotalHoras() {
-		double res = 0;
-		for (Double d : _horas.values())
-			res = res + d;
-		return res;
-	}
-
-	public Double obtenerSumaHorasDelTipo(String tipo) {
-		Double temp=_horas.get(tipo);
-		double res=0;
-		if (temp==null)
-			res=0;
-		else
-			res=temp.doubleValue();
-		return res;
-	}
 	
+	
+	//////////////////////////////
+	///		Override			//
+	//////////////////////////////	
 
 	@Override
 	/**
@@ -141,15 +210,5 @@ public class ListaHoras {
 		if (sb.substring(sb.length() - 1, sb.length()).equals(";"))
 			sb.delete(sb.length() - 1, sb.length());
 		return sb.toString();
-	}
-
-	public void eliminarHoras(String tipoHora) {
-		_horas.remove(tipoHora);
-		try {
-			validaHoras();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }

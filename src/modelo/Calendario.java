@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 
 public class Calendario implements Iterable<Dia>{
 	private List<Dia> _calendario;
@@ -29,6 +31,8 @@ public class Calendario implements Iterable<Dia>{
 	 * @return true si todo ok
 	 */
 	public boolean agregarDia(Dia d) {
+		if (this._calendario.contains(d))
+			return false;
 		ParametrosModelo.obtenerInstancia().set_items_tipo_horas.addAll(d.obtenerListaHoras().obtenerTiposUsados());
 		return _calendario.add(d);
 	}
@@ -58,7 +62,7 @@ public class Calendario implements Iterable<Dia>{
 	 * @param fichero
 	 * @return
 	 */
-	private boolean importarCalendario(File fichero) {
+	public boolean importarCalendario(File fichero) {
 		boolean res = false;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(fichero));
@@ -103,8 +107,10 @@ public class Calendario implements Iterable<Dia>{
 		boolean res = false;
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(fichero));
-			for (Dia d : _calendario)
+			for (Dia d : _calendario){
+				d.obtenerListaHoras().eliminarTiposConHorasCero();
 				bw.append(d.toString()+"\n");
+			}
 			bw.close();
 			res = true;
 		} catch (Exception e) {
@@ -178,9 +184,13 @@ public class Calendario implements Iterable<Dia>{
 
 	public static void main(String[] args) {
 		try {
+			DateTime dt=DateTime.now();
+			Dia actual=new Dia(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+			
 			Calendario c = new Calendario();
 			c.importarCalendario(new File("exportado.dat"));
-			c.agregarHorasADia(new Dia("20161206"), "NUEVO", 0.0);
+			c.generarCalendario(new Dia("20160101"), actual);
+			c.exportarCalendario(new File("exportado.dat"));
 			System.out.println(c);
 		} catch (Exception e) {
 			e.printStackTrace();

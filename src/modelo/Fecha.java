@@ -79,7 +79,7 @@ public class Fecha implements Comparable<Fecha>{
 	public Fecha obtenerDiaSiguiente() {
 		try {
 			DateTime dt=new DateTime(this.anio(), this.mes(), this.dia(), 0, 0);
-			dt.plusDays(1);
+			dt=dt.plusDays(1);
 			Fecha res = new Fecha(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
 			return res;
 		} catch (Exception e) {
