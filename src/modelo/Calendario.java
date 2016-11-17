@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.joda.time.DateTime;
 
 
 public class Calendario implements Iterable<Dia>{
@@ -154,10 +153,10 @@ public class Calendario implements Iterable<Dia>{
 		return res;
 	}
 	
-	public List<Dia> obtenerDiasSinHoras(){
+	public List<Dia> obtenerDiasSinHorasMetidas(){
 		List<Dia> res=new ArrayList<>();
 		for (Dia d:_calendario){
-			if (d.obtenerListaHoras().obtenerSumaTotalHoras()==0)
+			if (d.obtenerListaHoras().obtenerTiposUsadosMenos(ParametrosModelo.ITEM_TIPO_HORAS_RESTANTES).size()==0)
 				res.add(d);
 		}
 		Collections.sort(res);
@@ -184,14 +183,17 @@ public class Calendario implements Iterable<Dia>{
 
 	public static void main(String[] args) {
 		try {
-			DateTime dt=DateTime.now();
-			Dia actual=new Dia(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+			//DateTime dt=DateTime.now();
+			//Dia actual=new Dia(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
 			
 			Calendario c = new Calendario();
 			c.importarCalendario(new File("exportado.dat"));
-			c.generarCalendario(new Dia("20160101"), actual);
+			for (Dia d:c.obtenerDiasSinHorasMetidas()){
+				if (d.obtenerFecha().obtenerDiaDeLaSemana()==6 ||d.obtenerFecha().obtenerDiaDeLaSemana()==7)
+					d.obtenerListaHoras().anadirHoras("FIN DE SEMANA", 1.0);
+			}
 			c.exportarCalendario(new File("exportado.dat"));
-			System.out.println(c);
+			//System.out.println(c);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

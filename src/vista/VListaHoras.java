@@ -13,12 +13,12 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import modelo.ListaHoras;
 import modelo.ParametrosModelo;
-import util.Vistas;
 
 public class VListaHoras extends JPanel {
 	private static final long serialVersionUID = 5792964151871781810L;
@@ -65,12 +65,12 @@ public class VListaHoras extends JPanel {
 		String[] items=(String[])listaTotal.toArray(new String[listaTotal.size()]);	
 		
 		//Los items son todos menos los usados, pero incluyendo el seleccionado
-		JComboBox<String> jcb_tipo=Vistas.obtenerJComboBox(items,editable,new Dimension(100, 20));
+		JComboBox<String> jcb_tipo=ParametrosVista.obtenerJComboBox(items,editable,new Dimension(100, 20));
 		jcb_tipo.setSelectedItem(tipoHora);
-		this.add(jcb_tipo,Vistas.obtenerConstraints(1, fila, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
+		this.add(jcb_tipo,ParametrosVista.obtenerConstraints(1, fila, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
 		
-		JTextField jtf_horas=Vistas.obtenerJTextField(horas.toString(), editable, new Dimension(30, 20), false);
-		this.add(jtf_horas,Vistas.obtenerConstraints(2, fila, 1, 1,GridBagConstraints.EAST,GridBagConstraints.NONE));
+		JTextField jtf_horas=ParametrosVista.obtenerJTextField(horas.toString(), editable, new Dimension(30, 20), false);
+		this.add(jtf_horas,ParametrosVista.obtenerConstraints(2, fila, 1, 1,GridBagConstraints.EAST,GridBagConstraints.NONE));
 		jtf_horas.addFocusListener(new java.awt.event.FocusListener(){
 
 			@Override
@@ -94,7 +94,7 @@ public class VListaHoras extends JPanel {
 			
 		});
 		
-		JButton jb_eliminar=Vistas.obtenerJButton("-", new Dimension(41, 26));
+		JButton jb_eliminar=ParametrosVista.obtenerJButton("-", new Dimension(41, 26));
 		jb_eliminar.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -106,10 +106,10 @@ public class VListaHoras extends JPanel {
 				actualizarVista();
 			}
         });
-		this.add(jb_eliminar,Vistas.obtenerConstraints(3, fila, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE));
+		this.add(jb_eliminar,ParametrosVista.obtenerConstraints(3, fila, 1, 1, GridBagConstraints.WEST,GridBagConstraints.NONE));
 		if(fila==0){
 			//Si es la primera fila anadimos el boton de agregar mas lineas
-			JButton jb_anadir=Vistas.obtenerJButton("+", new Dimension(41, 26));
+			JButton jb_anadir=ParametrosVista.obtenerJButton("+", new Dimension(41, 26));
 			jb_anadir.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -125,7 +125,8 @@ public class VListaHoras extends JPanel {
 					actualizarVista();
 				}
 	        });
-			this.add(jb_anadir,Vistas.obtenerConstraints(4, fila, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE));
+			this.add(jb_anadir,ParametrosVista.obtenerConstraints(4, fila, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE));
+			this.add(new JLabel("      "),ParametrosVista.obtenerConstraints(5, fila, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE));
 			
 		}
 	}
@@ -133,6 +134,7 @@ public class VListaHoras extends JPanel {
 	public void actualizarVista(){
 		this.removeAll();
 		inicializarComponentes();
+		((VDia)this.getParent()).actualizarVista();
 		this.paintAll(this.getGraphics()); 
 	}
 

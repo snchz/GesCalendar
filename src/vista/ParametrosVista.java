@@ -1,8 +1,8 @@
-package util;
+package vista;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JButton;
@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-public class Vistas {
+public class ParametrosVista {
 
 	/**
 	 * 
@@ -51,6 +51,8 @@ public class Vistas {
 
 	public static JButton obtenerJButton(String texto, Dimension dimension) {
 		JButton res = new JButton(texto);
+		Font f=new Font(res.getFont().getName(), res.getFont().getStyle(), res.getFont().getSize()-2);
+		res.setFont(f);
 		if (dimension!=null){
 		res.setPreferredSize(dimension);
 		res.setMinimumSize(dimension);
@@ -65,6 +67,8 @@ public class Vistas {
 		res.setPreferredSize(dimension);
 		res.setMinimumSize(dimension);
 		res.setMaximumSize(dimension);
+		Font f=new Font(res.getFont().getName(), res.getFont().getStyle(), res.getFont().getSize()-2);
+		res.setFont(f);
 		return res;
 	}
 
@@ -75,6 +79,8 @@ public class Vistas {
 		res.setMinimumSize(dimension);
 		res.setMaximumSize(dimension);
 		res.setBackground(Color.WHITE);
+		Font f=new Font(res.getFont().getName(), res.getFont().getStyle(), res.getFont().getSize()-2);
+		res.setFont(f);
 		res.setHorizontalAlignment(SwingConstants.CENTER);
 		if (!borde)
 			res.setBorder(javax.swing.BorderFactory.createEmptyBorder());

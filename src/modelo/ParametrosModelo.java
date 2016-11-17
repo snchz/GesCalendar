@@ -12,10 +12,10 @@ public class ParametrosModelo {
 	public static String MENU_ARCHICHO_IMPORTARDEFECTO = "Importar desde .gcd";
 	public static String MENU_ARCHIVO = "Archivo";
 
-	public static Color FONDO_VCALENDARIO=Color.BLUE;
-	public static Color FONDO_VDIA=Color.CYAN;
-	public static Color FONDO_VLISTAHORAS=Color.GREEN;
-	public static Color FONDO_VPRINCIPAL=Color.ORANGE;
+	public static Color FONDO_VCALENDARIO=Color.WHITE;
+	public static Color FONDO_VDIA=Color.WHITE;
+	public static Color FONDO_VLISTAHORAS=Color.WHITE;
+	public static Color FONDO_VPRINCIPAL=Color.WHITE;
 
 	public static String ITEM_TIPO_HORAS_RESTANTES = "RESTANTE";
 	public static Double HORAS_TOTAL = 24.0;

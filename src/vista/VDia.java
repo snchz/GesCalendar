@@ -11,7 +11,6 @@ import javax.swing.JTextField;
 
 import modelo.Dia;
 import modelo.ParametrosModelo;
-import util.Vistas;
 
 public class VDia extends JPanel {
 	private static final long serialVersionUID = -3461158432879876002L;
@@ -38,17 +37,18 @@ public class VDia extends JPanel {
 	public void actualizarVista(){
 		this.removeAll();
 		inicializarComponentes();
+		//((VCalendario)this.getParent()).actualizarVista();
 		this.paintAll(this.getGraphics()); 
 	}
 	
 	private void inicializarComponentes(){
 		//Componente de Fecha
-		JTextField jtf_fecha = Vistas.obtenerJTextField(_d.obtenerFecha().obtenerFechaConFormato("yyyy/MM/dd"), false, new Dimension(80, 20), false);
-		this.add(jtf_fecha, Vistas.obtenerConstraints(0, 0, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
+		JTextField jtf_fecha = ParametrosVista.obtenerJTextField(_d.obtenerFecha().obtenerFechaConFormato("yyyy/MM/dd"), false, new Dimension(80, 20), false);
+		this.add(jtf_fecha, ParametrosVista.obtenerConstraints(0, 0, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
 
 		VListaHoras lh=new VListaHoras(this._d.obtenerListaHoras());
 		
-		this.add(lh,Vistas.obtenerConstraints(1, 0, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE));
+		this.add(lh,ParametrosVista.obtenerConstraints(1, 0, 1, 1, GridBagConstraints.EAST,GridBagConstraints.NONE));
 	}
 	
 

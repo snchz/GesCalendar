@@ -1,17 +1,21 @@
 package vista;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import modelo.Calendario;
 import modelo.Dia;
 import modelo.ParametrosModelo;
-import util.Vistas;
 
 public class VCalendario extends JPanel{
+	private Dia _iniSemana;
 	/**
 	 * 
 	 */
@@ -23,6 +27,11 @@ public class VCalendario extends JPanel{
 		_c=c;
 		setLayout(new GridBagLayout());
 		setBackground(ParametrosModelo.FONDO_VCALENDARIO);
+		try {
+			_iniSemana=new Dia(2016, 11, 7);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		inicializarComponentes();
 	}
 	
@@ -32,18 +41,49 @@ public class VCalendario extends JPanel{
 	
 	private void inicializarComponentes(){
 		int i=0;
-		for(Dia d:_c){
-			VDia vd=new VDia(d);
-			vd.setBorder(javax.swing.BorderFactory.createMatteBorder(
-                    1, 5, 1, 1, Color.DARK_GRAY));
-			this.add(vd,Vistas.obtenerConstraints(0, i, 1, 1,GridBagConstraints.WEST,GridBagConstraints.BOTH));
-			i++;
+
+		JButton jb_semanaAnterior=ParametrosVista.obtenerJButton("<-", new Dimension(41, 26));
+		jb_semanaAnterior.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					_iniSemana=new Dia(_iniSemana.obtenerFecha().obtenerLunesAnterior());
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				actualizarVista();
+			}
+        });
+		JButton jb_semanaSiguiente=ParametrosVista.obtenerJButton("->", new Dimension(41, 26));
+		jb_semanaSiguiente.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					_iniSemana=new Dia(_iniSemana.obtenerFecha().obtenerLunesSiguiente());
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				actualizarVista();
+			}
+        });
+
+		this.add(jb_semanaAnterior,ParametrosVista.obtenerConstraints(0, i, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
+		this.add(jb_semanaSiguiente,ParametrosVista.obtenerConstraints(1, i, 1, 1,GridBagConstraints.WEST,GridBagConstraints.NONE));
+		i++;
+		try {
+			Dia finSemana = new Dia(_iniSemana.obtenerFecha().obtenerDomingoSiguiente());
+			for(Dia d:_c){
+				if (d.hashCode()>=_iniSemana.hashCode() && d.hashCode()<=finSemana.hashCode()){
+					VDia vd=new VDia(d);
+					vd.setBorder(javax.swing.BorderFactory.createMatteBorder(
+		                    1, 5, 1, 1, Color.DARK_GRAY));
+					this.add(vd,ParametrosVista.obtenerConstraints(0, i, 1, 1,GridBagConstraints.WEST,GridBagConstraints.BOTH));
+					i++;
+				}
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
-	}
-	
-	public void actualizarComponente(){
-		this.removeAll();
-		this.inicializarComponentes();
 	}
 	
 
@@ -68,5 +108,11 @@ public class VCalendario extends JPanel{
 		jf.add(vc);
 		jf.setVisible(true);
 		jf.pack();
+	}
+
+	public void actualizarVista() {
+		this.removeAll();
+		inicializarComponentes();
+		this.paintAll(this.getGraphics()); 
 	}
 }

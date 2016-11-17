@@ -76,6 +76,44 @@ public class Fecha implements Comparable<Fecha>{
 	}
 	
 
+	public Fecha obtenerDomingoSiguiente() {
+		try{
+			DateTime dt=new DateTime(this.anio(), this.mes(), this.dia(), 0, 0);
+			dt=dt.plusDays(1);
+			while (dt.dayOfWeek().get()!=7)
+				dt=dt.plusDays(1);
+			Fecha res = new Fecha(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+			return res;
+		}catch (Exception e) {
+			return null;
+		}
+	}
+	public Fecha obtenerLunesAnterior()  {
+		try{
+			DateTime dt=new DateTime(this.anio(), this.mes(), this.dia(), 0, 0);
+			dt=dt.plusDays(-1);
+			while (dt.dayOfWeek().get()!=1)
+				dt=dt.plusDays(-1);
+			Fecha res = new Fecha(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+			return res;
+		}catch (Exception e) {
+			return null;
+		}
+	}
+	public Fecha obtenerLunesSiguiente() {
+		try{
+			DateTime dt=new DateTime(this.anio(), this.mes(), this.dia(), 0, 0);
+			dt=dt.plusDays(1);
+			while (dt.dayOfWeek().get()!=1)
+				dt=dt.plusDays(1);
+			Fecha res = new Fecha(dt.getYear(), dt.getMonthOfYear(), dt.getDayOfMonth());
+			return res;
+		}catch (Exception e) {
+			return null;
+		}
+	}
+	
+
 	public Fecha obtenerDiaSiguiente() {
 		try {
 			DateTime dt=new DateTime(this.anio(), this.mes(), this.dia(), 0, 0);
